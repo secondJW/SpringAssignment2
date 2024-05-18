@@ -27,4 +27,8 @@ public class ScheduleController {
         return scheduleService.getTodo(id);
     }
 
+    @GetMapping("/schedule/get")
+    public List<ScheduleResponseDto> getAllTodo(){
+        return scheduleService.getAllTodo();
+    }
 }

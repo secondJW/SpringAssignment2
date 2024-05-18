@@ -34,4 +34,8 @@ public class ScheduleService {
     public ScheduleResponseDto getTodo(Long id) {
         return new ScheduleResponseDto(scheduleRepository.getReferenceById(id));
     }
+
+    public List<ScheduleResponseDto> getAllTodo() {
+        return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
+    }
 }
