@@ -6,6 +6,8 @@ import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.repository.ScheduleRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ScheduleService {
 
@@ -21,11 +23,15 @@ public class ScheduleService {
 
         // DB 저장
         Schedule postSchedule=scheduleRepository.save(schedule);
-        System.out.println(postSchedule.getId()+"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+
 
         // Entity -> ResponseDto
         ScheduleResponseDto scheduleResponseDto=new ScheduleResponseDto(postSchedule);
 
         return scheduleResponseDto;
+    }
+
+    public ScheduleResponseDto getTodo(Long id) {
+        return new ScheduleResponseDto(scheduleRepository.getReferenceById(id));
     }
 }
