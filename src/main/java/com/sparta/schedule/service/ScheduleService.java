@@ -55,4 +55,14 @@ public class ScheduleService {
                 new IllegalArgumentException("선택한 일정이 없음")
         );
     }
+
+    public Long deleteTodo(Long id, String secrete) {
+        // 해당 메모가 DB에 존재하는지 확인
+        Schedule schedule = findSchedule(id);
+
+        // memo 삭제
+        scheduleRepository.delete(schedule);
+
+        return id;
+    }
 }
