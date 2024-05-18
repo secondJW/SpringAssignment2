@@ -3,6 +3,7 @@ package com.sparta.schedule.controller;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.service.ScheduleService;
+import jakarta.transaction.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,5 +31,11 @@ public class ScheduleController {
     @GetMapping("/schedule/get")
     public List<ScheduleResponseDto> getAllTodo(){
         return scheduleService.getAllTodo();
+    }
+
+    @Transactional
+    @PutMapping("/schedule/update")
+    public ScheduleResponseDto updateTodo(@RequestBody ScheduleRequestDto requestDto, @RequestParam Long id){
+        return scheduleService.updateTodo(requestDto, id);
     }
 }

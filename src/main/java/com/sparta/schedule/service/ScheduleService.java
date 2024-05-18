@@ -4,6 +4,7 @@ import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.repository.ScheduleRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,5 +38,21 @@ public class ScheduleService {
 
     public List<ScheduleResponseDto> getAllTodo() {
         return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
+    }
+
+    public ScheduleResponseDto updateTodo(ScheduleRequestDto requestDto, Long id) {
+       // 해당 일정이 DB에 존재하는지 확인
+       Schedule schedule = findSchedule(id);
+
+       // 일정 내용 수정
+       schedule.update(requestDto);
+
+        return new ScheduleResponseDto(schedule);
+    }
+
+    private Schedule findSchedule(Long id) {
+        return scheduleRepository.findById(id).orElseThrow(()->
+                new IllegalArgumentException("선택한 일정이 없음")
+        );
     }
 }
