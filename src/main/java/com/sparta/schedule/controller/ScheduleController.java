@@ -40,7 +40,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping("/schedule")
-    public Long deleteTodo(@RequestParam Long id, @RequestBody String secrete){
-        return scheduleService.deleteTodo(id, secrete);
+    public void deleteTodo(@RequestParam Long id, @RequestBody String secrete){
+         scheduleService.deleteTodo(id, secrete);
     }
 }
