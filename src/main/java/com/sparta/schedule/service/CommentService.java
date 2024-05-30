@@ -7,19 +7,27 @@ import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.repository.CommentRepository;
 import com.sparta.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
+    private final List<Schedule> existScheduleList=scheduleRepository.findAll();
+
 
     public CommentResponseDto addComment(CommentRequestDto commentRequestDto) {
-       Schedule schedule= scheduleRepository.findById(commentRequestDto.getSheduleId()).orElseThrow(()->
+       Schedule schedule= scheduleRepository.findById(commentRequestDto.getScheduleId()).orElseThrow(()->
                 new NullPointerException("해당 일정이 존재하지 않음")
                 );
-       if(commentRequestDto.getSheduleId()==null){
+       if(commentRequestDto.getScheduleId()==null){
            throw new IllegalArgumentException("아이디를 입력 하지 않았음");
        }
        if(commentRequestDto.getContent()==null){
@@ -27,5 +35,53 @@ public class CommentService {
        }
        Comment comment=commentRepository.save(new Comment(commentRequestDto, schedule));
         return new CommentResponseDto(comment);
+    }
+
+    @Transactional
+    public CommentResponseDto updateComment(CommentRequestDto commentRequestDto, Long commentId) {
+
+        if(!isExistSchedule(commentRequestDto, existScheduleList)){
+            throw new NullPointerException("해당 일정이 없음");
+        }
+        Comment comment= commentRepository.findById(commentId).orElseThrow(()->
+                new NullPointerException("해당 댓글이 없음")
+        );
+        if(commentRequestDto.getScheduleId()==null || commentId==null){
+            throw new IllegalArgumentException("일정 아이디를 입력 하지 않았거나 댓글 아이디를 입력하지 않았음");
+        }
+        if(!comment.getManager().equals(commentRequestDto.getManager())){
+            throw new IllegalArgumentException("현재 사용자와 수정하려는 댓글의 사용자가 다름");
+        }
+        comment.update(commentRequestDto);
+        return new CommentResponseDto(comment);
+    }
+
+    public ResponseEntity<String> deleteComment(CommentRequestDto commentRequestDto, Long commentId) {
+
+        if(!isExistSchedule(commentRequestDto, existScheduleList)){
+            throw new NullPointerException("해당 일정이 없음");
+        }
+        Comment comment= commentRepository.findById(commentId).orElseThrow(()->
+                new NullPointerException("해당 댓글이 없음")
+        );
+        if(commentRequestDto.getScheduleId()==null || commentId==null){
+            throw new IllegalArgumentException("일정 아이디를 입력 하지 않았거나 댓글 아이디를 입력하지 않았음");
+        }
+
+        if(!comment.getManager().equals(commentRequestDto.getManager())){
+            throw new IllegalArgumentException("현재 사용자와 삭제하려는 댓글의 사용자가 다름");
+        }
+        commentRepository.delete(comment);
+        String successMessage="delete success";
+        return new ResponseEntity<>(successMessage, HttpStatus.OK);
+
+    }
+    private boolean isExistSchedule(CommentRequestDto commentRequestDto, List<Schedule> existScheduleList){
+        for (Schedule scheduleList : existScheduleList) {
+            if(commentRequestDto.getScheduleId().equals(scheduleList.getId())){
+                return true;
+            }
+        }
+        return false;
     }
 }

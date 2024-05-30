@@ -6,5 +6,5 @@ import lombok.Getter;
 public class CommentRequestDto {
     private String content;
     private String manager;
-    private Long sheduleId;
+    private Long scheduleId;
 }
