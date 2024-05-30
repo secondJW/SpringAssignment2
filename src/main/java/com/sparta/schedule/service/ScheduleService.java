@@ -3,9 +3,9 @@ package com.sparta.schedule.service;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
-import com.sparta.schedule.error.PasswordDoesNotMatch;
+import com.sparta.schedule.error.PasswordDoesNotMatchException;
 import com.sparta.schedule.repository.ScheduleRepository;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class ScheduleService {
            // 일정 내용 수정
            schedule.update(requestDto);
        }else{
-           throw new PasswordDoesNotMatch("비밀번호 안 맞음");
+           throw new PasswordDoesNotMatchException("비밀번호 안 맞음");
        }
 
 
@@ -59,7 +59,7 @@ public class ScheduleService {
 
     private Schedule findSchedule(Long id) {
         return scheduleRepository.findById(id).orElseThrow(()->
-                new IllegalArgumentException("선택한 일정이 없음")
+                new EntityNotFoundException("선택한 일정이 없음")
         );
     }
 
@@ -71,7 +71,7 @@ public class ScheduleService {
             // 일정 내용 삭제
             scheduleRepository.delete(schedule);
         }else{
-            throw new PasswordDoesNotMatch("비밀번호 안 맞음");
+            throw new PasswordDoesNotMatchException("비밀번호 안 맞음");
         }
 
     }

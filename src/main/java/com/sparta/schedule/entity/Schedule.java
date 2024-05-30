@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -24,6 +26,9 @@ public class Schedule extends Timestamped {
     private String manager;
     @Column(name = "secrete", nullable = false)
     private String secrete;
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Comment> commentList;
 
 
     public Schedule(ScheduleRequestDto requestDto) {

@@ -16,8 +16,8 @@ public class GlobalExceptionHandler {
 
     }
 
-    @ExceptionHandler(PasswordDoesNotMatch.class)
-    public ResponseEntity<ErrorResponse> handlePassWordDoesNotMatch(PasswordDoesNotMatch e){
+    @ExceptionHandler(PasswordDoesNotMatchException.class)
+    public ResponseEntity<ErrorResponse> handlePassWordDoesNotMatch(PasswordDoesNotMatchException e){
         return new ResponseEntity<>(new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
     }
 

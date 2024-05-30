@@ -1,9 +1,7 @@
 package com.sparta.schedule.dto;
 
 import com.sparta.schedule.entity.Schedule;
-import jakarta.persistence.*;
 import lombok.Getter;
-import org.springframework.data.annotation.LastModifiedBy;
 
 import java.time.LocalDateTime;
 @Getter
