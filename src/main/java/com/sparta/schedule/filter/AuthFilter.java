@@ -1,4 +1,5 @@
 package com.sparta.schedule.filter;
+
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.jwt.JwtUtil;
 import com.sparta.schedule.repository.ScheduleRepository;
@@ -6,7 +7,9 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 
@@ -31,7 +34,7 @@ public class AuthFilter implements Filter {
             // 인증절차
              String manager = httpServletRequest.getParameter("manager");
              if(scheduleRepository.findByManager(manager).isEmpty()){
-                 throw new NullPointerException("등록된 회원이 아님");
+                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효한 토큰이 아님");
              }
              chain.doFilter(request, response);
             // log.info("인증처리 하지 않는 url : "+url);
@@ -57,7 +60,7 @@ public class AuthFilter implements Filter {
                 Schedule schedule = scheduleRepository.findByManager(info.getSubject()).orElseThrow(() ->
                         new NullPointerException("Not Found Manager")
                 );
-
+                request.setAttribute("manager", info.getSubject());
                 chain.doFilter(request, response);
 
             } else {

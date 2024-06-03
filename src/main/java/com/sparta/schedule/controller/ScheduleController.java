@@ -3,7 +3,7 @@ package com.sparta.schedule.controller;
 import com.sparta.schedule.dto.ScheduleRequestDto;
 import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.service.ScheduleService;
-import jakarta.transaction.Transactional;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,14 +33,14 @@ public class ScheduleController {
         return scheduleService.getAllTodo();
     }
 
-    @Transactional
+
     @PutMapping("/schedule/update")
-    public ScheduleResponseDto updateTodo(@RequestBody ScheduleRequestDto requestDto, @RequestParam Long id){
-        return scheduleService.updateTodo(requestDto, id);
+    public ScheduleResponseDto updateTodo(@RequestBody ScheduleRequestDto requestDto, @RequestParam Long id, HttpServletRequest request){
+        return scheduleService.updateTodo(requestDto, id, request.getAttribute("manager").toString());
     }
 
     @DeleteMapping("/schedule")
-    public void deleteTodo(@RequestParam Long id, @RequestBody String secrete){
-         scheduleService.deleteTodo(id, secrete);
+    public void deleteTodo(@RequestParam Long id, @RequestBody String secrete, HttpServletRequest request){
+         scheduleService.deleteTodo(id, secrete, request.getAttribute("manager").toString());
     }
 }

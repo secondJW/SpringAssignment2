@@ -4,14 +4,12 @@ import com.sparta.schedule.dto.ScheduleRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @Table(name="schedule")
 public class Schedule extends Timestamped {

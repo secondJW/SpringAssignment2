@@ -1,5 +1,6 @@
 package com.sparta.schedule.jwt;
 
+import com.sparta.schedule.entity.UserRoleEnum;
 import com.sparta.schedule.repository.ScheduleRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -7,6 +8,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -119,6 +121,5 @@ public class JwtUtil {
         }
         return null;
     }
-
 
 }

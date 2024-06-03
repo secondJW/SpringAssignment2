@@ -5,7 +5,9 @@ import com.sparta.schedule.dto.ScheduleResponseDto;
 import com.sparta.schedule.entity.Schedule;
 import com.sparta.schedule.error.PasswordDoesNotMatchException;
 import com.sparta.schedule.repository.ScheduleRepository;
+import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,15 +43,15 @@ public class ScheduleService {
         return scheduleRepository.findAllByOrderByModifiedAtDesc().stream().map(ScheduleResponseDto::new).toList();
     }
 
-    public ScheduleResponseDto updateTodo(ScheduleRequestDto requestDto, Long id) {
+    public ScheduleResponseDto updateTodo(ScheduleRequestDto requestDto, Long id, String manager) {
        // 해당 일정이 DB에 존재하는지 확인
        Schedule schedule = findSchedule(id);
 
-       if(schedule.getSecrete().equals(requestDto.getSecrete())){
+       if(schedule.getSecrete().equals(requestDto.getSecrete())&& schedule.getManager().equals(manager)){
            // 일정 내용 수정
            schedule.update(requestDto);
        }else{
-           throw new PasswordDoesNotMatchException("비밀번호 안 맞음");
+           throw new PasswordDoesNotMatchException("비밀번호 안 맞거나 작성자와 현재 회원이 일치하지 않음");
        }
 
 
@@ -63,15 +65,16 @@ public class ScheduleService {
         );
     }
 
-    public void deleteTodo(Long id, String secrete) {
+    public void deleteTodo(Long id, String secrete, String manager) {
         // 해당 메모가 DB에 존재하는지 확인
         Schedule schedule = findSchedule(id);
 
-        if(schedule.getSecrete().equals(secrete)){
+
+        if(schedule.getSecrete().equals(secrete) && schedule.getManager().equals(manager)){
             // 일정 내용 삭제
             scheduleRepository.delete(schedule);
         }else{
-            throw new PasswordDoesNotMatchException("비밀번호 안 맞음");
+            throw new PasswordDoesNotMatchException("비밀번호 안 맞거나 작성자와 현재 회원이 일치하지 않음");
         }
 
     }

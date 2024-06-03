@@ -2,10 +2,9 @@ package com.sparta.schedule.controller;
 
 import com.sparta.schedule.dto.CommentRequestDto;
 import com.sparta.schedule.dto.CommentResponseDto;
-import com.sparta.schedule.entity.Comment;
 import com.sparta.schedule.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +19,14 @@ public class CommentController {
     }
 
     @PutMapping("/comment")
-    public CommentResponseDto updateComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentId){
-        return commentService.updateComment(commentRequestDto,commentId);
+    public CommentResponseDto updateComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentId, HttpServletRequest request){
+        return commentService.updateComment(commentRequestDto,commentId, request.getAttribute("manager").toString());
     }
 
     @DeleteMapping("/comment")
-    public ResponseEntity<String> deleteComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentId){
+    public ResponseEntity<String> deleteComment(@RequestBody CommentRequestDto commentRequestDto, @PathVariable Long commentId,  HttpServletRequest request){
         String successMessage="Success delete";
-        return commentService.deleteComment(commentRequestDto, commentId);
+        return commentService.deleteComment(commentRequestDto, commentId, request.getAttribute("manager").toString());
 
     }
 }

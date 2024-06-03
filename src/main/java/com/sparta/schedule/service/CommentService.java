@@ -16,12 +16,17 @@ import java.util.List;
 
 
 @Service
-@RequiredArgsConstructor
+
 public class CommentService {
     private final CommentRepository commentRepository;
     private final ScheduleRepository scheduleRepository;
-    private final List<Schedule> existScheduleList=scheduleRepository.findAll();
+    private final List<Schedule> existScheduleList;
 
+    public CommentService(CommentRepository commentRepository, ScheduleRepository scheduleRepository, List<Schedule> existScheduleList) {
+        this.commentRepository = commentRepository;
+        this.scheduleRepository = scheduleRepository;
+        this.existScheduleList = scheduleRepository.findAll();
+    }
 
     public CommentResponseDto addComment(CommentRequestDto commentRequestDto) {
        Schedule schedule= scheduleRepository.findById(commentRequestDto.getScheduleId()).orElseThrow(()->
@@ -38,7 +43,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(CommentRequestDto commentRequestDto, Long commentId) {
+    public CommentResponseDto updateComment(CommentRequestDto commentRequestDto, Long commentId, String manager) {
 
         if(!isExistSchedule(commentRequestDto, existScheduleList)){
             throw new NullPointerException("해당 일정이 없음");
@@ -52,11 +57,14 @@ public class CommentService {
         if(!comment.getManager().equals(commentRequestDto.getManager())){
             throw new IllegalArgumentException("현재 사용자와 수정하려는 댓글의 사용자가 다름");
         }
+        if(!commentRequestDto.getManager().equals(manager)){
+            throw new IllegalArgumentException("작성자만 댓글 수정/삭제 할 수 있음");
+        }
         comment.update(commentRequestDto);
         return new CommentResponseDto(comment);
     }
 
-    public ResponseEntity<String> deleteComment(CommentRequestDto commentRequestDto, Long commentId) {
+    public ResponseEntity<String> deleteComment(CommentRequestDto commentRequestDto, Long commentId, String manager) {
 
         if(!isExistSchedule(commentRequestDto, existScheduleList)){
             throw new NullPointerException("해당 일정이 없음");
@@ -70,6 +78,9 @@ public class CommentService {
 
         if(!comment.getManager().equals(commentRequestDto.getManager())){
             throw new IllegalArgumentException("현재 사용자와 삭제하려는 댓글의 사용자가 다름");
+        }
+        if(!commentRequestDto.getManager().equals(manager)){
+            throw new IllegalArgumentException("작성자만 댓글 수정/삭제할 수 있음");
         }
         commentRepository.delete(comment);
         String successMessage="delete success";
